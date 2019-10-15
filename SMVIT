@@ -1,0 +1,1535 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="http://gmpg.org/xfn/11">
+
+<title>sirmvitplacements2020.wordpress.com</title>
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.remove(); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[i].remove();
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+						+ '//' + window.location.hostname;
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9zaXJtdml0cGxhY2VtZW50czIwMjAuaG9tZS5ibG9n"
+		+ "&wpcomid=162950147"
+		+ "&time=1571161526";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='//s2.wp.com' />
+<link rel='dns-prefetch' href='//s1.wp.com' />
+<link rel='dns-prefetch' href='//sirmvitplacements2020home.wordpress.com' />
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//s.pubmine.com' />
+<link rel='dns-prefetch' href='//x.bidswitch.net' />
+<link rel='dns-prefetch' href='//static.criteo.net' />
+<link rel='dns-prefetch' href='//ib.adnxs.com' />
+<link rel='dns-prefetch' href='//aax.amazon-adsystem.com' />
+<link rel='dns-prefetch' href='//bidder.criteo.com' />
+<link rel='dns-prefetch' href='//cas.criteo.com' />
+<link rel='dns-prefetch' href='//gum.criteo.com' />
+<link rel='dns-prefetch' href='//ads.pubmatic.com' />
+<link rel='dns-prefetch' href='//gads.pubmatic.com' />
+<link rel='dns-prefetch' href='//tpc.googlesyndication.com' />
+<link rel='dns-prefetch' href='//ad.doubleclick.net' />
+<link rel='dns-prefetch' href='//googleads.g.doubleclick.net' />
+<link rel='dns-prefetch' href='//www.googletagservices.com' />
+<link rel='dns-prefetch' href='//cdn.switchadhub.com' />
+<link rel='dns-prefetch' href='//delivery.g.switchadhub.com' />
+<link rel='dns-prefetch' href='//delivery.swid.switchadhub.com' />
+<link rel="alternate" type="application/rss+xml" title="sirmvitplacements2020.wordpress.com &raquo; Feed" href="https://sirmvitplacements2020.home.blog/feed/" />
+<link rel="alternate" type="application/rss+xml" title="sirmvitplacements2020.wordpress.com &raquo; Comments Feed" href="https://sirmvitplacements2020.home.blog/comments/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+			<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s2.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1556893897h&ver=5.3-beta2-46373"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='all-css-0-1' href='https://s1.wp.com/_static/??-eJydU9tOwzAM/SFS02mDJ8S3JK0XTHNT7Gra3+M2DAbTKsRLZMfn+HKcwKmYISfBJBBnU8LsKTGcypCj4UgBz7+8bmB+gCuaC9l/EaOtEwolb5ytoNCfN9vkU66jHRl8yM6GG+xVf4EmZHhHKXaYzOptwSkdKZGcv4wb8AXpZ3UdVq+RivDUPXWP4GYK49LqWstVW8/Acg74hzQri0EFmLBevJZwO8WQP8F91x+0iZFYWg/cNeaa5S7/OIdgmAQNjrTq3yLw2PU7KJmFdRiW1lNL//t2S9NFH72PxcqCiFrFYsCosC1ae0vOlYrMRs9IczTypsTNFXpMWEkDd8wbbksJZXa69REL6pHEqK/zvekudncW8Afi8q4/V/EPNqWhlTarGJtq0ehRGHDWaJ4ITbAnEIwlWNEyVxMQpCxNlYuxrWc2OoEVyumHY47B0u1HvaJWXH6tmn4V4ttdSK/xpT889/3+sOv37x9XMKSd?cssminify=yes' type='text/css' media='all' />
+<style id='independent-publisher-2-style-inline-css' type='text/css'>
+#hero-header { background: url("https://sirmvitplacements2020home.files.wordpress.com/2019/06/cropped-mvit-pic.jpg") no-repeat center; background-size: cover; background-attachment: scroll; }
+</style>
+<link rel='stylesheet' id='print-css-1-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<link rel='stylesheet' id='all-css-2-1' href='https://s1.wp.com/_static/??/wp-content/mu-plugins/actionbar/actionbar.css,/wp-content/themes/h4/global.css?m=1560469195j&cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJyF0FEKwjAMBuAL2RUZHb6IZ6k1jtQ1rU26oae3wkSEqhDIQz7In+glKSQ3lROw9rWuBfJtbZ3njf4FVMAxW4EuIL2wiyRA8rQpsgRgtiM0piEecQJVGHIFJHXNOTbcZySkGWH5yzxIsu6iMjDeoXUIp3fm7x9Y1SHst8bsejMMpvcPs7tzAg=='></script>
+<link rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1530132353h&cssminify=yes' type='text/css' media='all' />
+<!--[if lt IE 8]>
+<link rel='stylesheet' id='highlander-comments-ie7-css'  href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style-ie7.css?m=1351637563h&#038;ver=20110606' type='text/css' media='all' />
+<![endif]-->
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://sirmvitplacements2020home.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel='shortlink' href='https://wp.me/b1IMb' />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="sirmvitplacements2020.wordpress.com" />
+<meta property="og:url" content="https://sirmvitplacements2020.home.blog/" />
+<meta property="og:site_name" content="sirmvitplacements2020.wordpress.com" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:site" content="@wordpressdotcom" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon-precomposed" href="https://s2.wp.com/i/webclip.png" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://sirmvitplacements2020.home.blog/osd.xml" title="sirmvitplacements2020.wordpress.com" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="application-name" content="sirmvitplacements2020.wordpress.com" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://sirmvitplacements2020.home.blog/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" />		<script type="text/javascript">
+		function __ATA_CC() {var v = document.cookie.match('(^|;) ?personalized-ads-consent=([^;]*)(;|$)');return v ? 1 : 0;}
+		var __ATA_PP = { pt: 0, ht: 0, tn: 'independent-publisher-2', amp: false, siteid: 8982, blogid: 162950147, consent: __ATA_CC() };
+		var __ATA = __ATA || {};
+		__ATA.cmd = __ATA.cmd || [];
+		__ATA.criteo = __ATA.criteo || {};
+		__ATA.criteo.cmd = __ATA.criteo.cmd || [];
+		</script>
+		<script type="text/javascript">
+		(function(){function g(a,c){a:{for(var b=a.length,d="string"==typeof a?a.split(""):a,e=0;e<b;e++)if(e in d&&c.call(void 0,d[e],e,a)){c=e;break a}c=-1}return 0>c?null:"string"==typeof a?a.charAt(c):a[c]};function h(a,c,b){b=null!=b?"="+encodeURIComponent(String(b)):"";if(c+=b){b=a.indexOf("#");0>b&&(b=a.length);var d=a.indexOf("?");if(0>d||d>b){d=b;var e=""}else e=a.substring(d+1,b);a=[a.substr(0,d),e,a.substr(b)];b=a[1];a[1]=c?b?b+"&"+c:c:b;a=a[0]+(a[1]?"?"+a[1]:"")+a[2]}return a};var k=0;function l(a,c){var b=document.createElement("script");b.src=a;b.onload=function(){c&&c(void 0)};b.onerror=function(){c("error")};a=document.getElementsByTagName("head");var d;a&&0!==a.length?d=a[0]:d=document.documentElement;d.appendChild(b)}function m(a){return"string"==typeof a&&0<a.length}
+		function p(a,c,b){c=void 0===c?"":c;b=void 0===b?".":b;var d=[];Object.keys(a).forEach(function(e){var f=a[e],n=typeof f;"object"==n&&null!=f||"function"==n?d.push(p(f,c+e+b)):null!==f&&void 0!==f&&(e=encodeURIComponent(c+e),d.push(e+"="+encodeURIComponent(f)))});return d.filter(m).join("&")}function q(){return window.__ATA||{}}function r(a,c){a||(q().config=c.c,l(c.url))}var t=Math.floor(1E13*Math.random());q().rid=t;
+		var u=q().pageParams,v="//"+(q().serverDomain||"s.pubmine.com")+"/conf",w=window.top===window,x;try{var y=JSON.parse(document.getElementById("oil-configuration").innerText);if("boolean"!==typeof y.gdpr_applies)throw Error("Config doesn't contain gdpr_applies");x=y.gdpr_applies?1:0}catch(a){x=null}
+		var z=x,A=window.__ATA_PP||u||null,B=w?document.referrer?document.referrer:null:null,C=w?null:document.referrer?document.referrer:null,D=function(){var a=void 0===a?document.cookie:a;return(a=g(a.split("; "),function(c){return-1!=c.indexOf("__ATA_tuuid=")}))?a.split("=")[1]:""}(),E=p({gdpr:z,pp:A,rid:t,src:B,ref:C,tuuid:D?D:null,vp:window.innerWidth+"x"+window.innerHeight},"",".");
+		(function(a){var c;k++;var b="callback__"+Date.now().toString(36)+"_"+k.toString(36);a=h(a,void 0===c?"cb":c,b);window[b]=function(d){r(void 0,d)};l(a,function(d){d&&r(d)})})(v+"?"+E);}).call(this);
+		</script><script type="text/javascript">
+	window.google_analytics_uacct = "UA-52447-2";
+</script>
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-52447-2']);
+	_gaq.push(['_gat._anonymizeIp']);
+	_gaq.push(['_setDomainName', 'none']);
+	_gaq.push(['_setAllowLinker', true]);
+	_gaq.push(['_initData']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+	})();
+</script>
+</head>
+
+<body class="home blog wp-embed-responsive customizer-styles-applied has-header-image admin-bar highlander-enabled highlander-light infinite-scroll neverending">
+
+<div id="page" class="hfeed site">
+	<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+	<div id="hero-header" class="site-hero-section">
+		<header id="masthead" class="site-header" role="banner">
+			<div class="inner">
+				<div class="site-branding">
+					
+												<h1 class="site-title"><a href="https://sirmvitplacements2020.home.blog/" rel="home">sirmvitplacements2020.wordpress.com</a></h1>
+										</div><!-- .site-branding -->
+
+				
+									<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false" id="primary-menu-button">
+						Menu					</button><!-- .menu-toggle -->
+				
+			</div><!-- .inner -->
+		</header><!-- #masthead -->
+	</div>
+
+				<nav id="site-navigation" class="main-navigation" role="navigation">
+			<div class="menu-primary-container"><ul id="primary-menu" class="menu"><li id="menu-item-6" class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-6"><a href="/" aria-current="page">Home</a></li>
+</ul></div>		</nav><!-- .main-navigation -->
+	
+	
+	
+	<div id="content-wrapper" class="content-wrapper">
+		<div id="content" class="site-content">
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+			
+						
+				
+<article id="post-535" class="post-535 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/14/attention-students-registered-for-cognizant/" rel="bookmark">Attention Students Registered for&nbsp;Cognizant.</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p> Cognizant drive test on 15/10/2019 &amp; 16/10/2019 </p>
+
+
+
+<p> As per information from HR of cognizant. Online auto proctored test of cognizant will be on 15/10/2019 to 16/10/2019 23.59.00 hrs.Kindly inform your students check emails on regular basis since test link will be sent to candidates directly by company. </p>
+
+
+
+<p><strong>General information</strong>   </p>
+
+
+
+<p><strong>1.</strong> Test can be completed from any where at convenience of the candidate but system with high speed internet &amp; good resolution web camera is pre requisite to take test.</p>
+
+
+
+<p> <strong>2.</strong> VTU-CPC Director is identifying Test center where students can take test for the convinence of students who do posses systems with web camera list of the same will be published in VTU website : <a rel="noreferrer noopener" href="http://vtu.ac.in/placement/" target="_blank">http://vtu.ac.in/placement/</a> on 14/10/2019</p>
+
+
+
+<p><strong>3.</strong> Inform students to read instructions &amp; FAQ mentioned in the mail before attempting the test without fail<br></p>
+
+
+
+<p><strong>Important</strong><span style="text-decoration:underline;"><strong>  information</strong>1.</span> Candidates will not receive cognizant id hence candidates should enter their own number.Ex: 12345678 as cognizant id (it is any number which should be 8 digits number) and note down that number for future reference.<br>Prof. Karthik.K.RSpecial officer- Examination            &amp;   Placements coordinator <br>VTU CPC Bangalore </p>
+		<div class="wpcnt">
+			<div class="wpa wpmrec">
+				<span class="wpa-about">Advertisements</span>
+				<div class="u">		<div style="padding-bottom:15px;width:300px;height:250px;float:left;margin-right:5px;margin-top:0px">
+			<div id="atatags-26942-5da605b659b81">
+				<script type="text/javascript">
+				__ATA.cmd.push(function() {
+					__ATA.initSlot('atatags-26942-5da605b659b81',  {
+						collapseEmpty: 'before',
+						sectionId: '26942',
+						location: 120,
+						width: 300,
+						height: 250
+					});
+				});
+				</script>
+			</div>
+		</div>		<div style="padding-bottom:15px;width:300px;height:250px;float:left;margin-top:0px">
+			<div id="atatags-114160-5da605b659b86">
+				<script type="text/javascript">
+				__ATA.cmd.push(function() {
+					__ATA.initSlot('atatags-114160-5da605b659b86',  {
+						collapseEmpty: 'before',
+						sectionId: '114160',
+						location: 130,
+						width: 300,
+						height: 250
+					});
+				});
+				</script>
+			</div>
+		</div></div>
+				
+			</div>
+		</div>	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/14/attention-students-registered-for-cognizant/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/14/attention-students-registered-for-cognizant/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-14T05:38:46+00:00">October 14, 2019</time></a>
+							</span>
+
+			<span class="word-count">1 Minute</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-528" class="post-528 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-registered-for-temenos-drive/" rel="bookmark">Attention Final year Students Registered for Temenos&nbsp;Drive.</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p>The Temenos Drive Planned at Chennai Stand Cancelled.</p>
+
+
+
+<p>All registered students to Note.</p>
+
+
+
+<p>Director: T &amp; P Cell</p>
+<div id="atatags-370373-5da605b65a3ea">
+        <script type="text/javascript">
+            __ATA.cmd.push(function() {
+                __ATA.initVideoSlot('atatags-370373-5da605b65a3ea', {
+                    sectionId: '370373',
+                    format: 'inread'
+                });
+            });
+        </script>
+    </div>	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-registered-for-temenos-drive/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-registered-for-temenos-drive/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-10T06:52:24+00:00">October 10, 2019</time></a>
+							</span>
+
+			<span class="word-count">0 Minutes</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-524" class="post-524 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-off-campus-drive-by-temenos/" rel="bookmark">ATTENTION FINAL YEAR STUDENTS!  Off Campus Drive by&nbsp;TEMENOS!</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p><strong>SIR
+MVIT</strong></p>
+
+
+
+<p><strong>TRAINING
+&amp; PLACEMENT CELL</strong></p>
+
+
+
+<p><strong>CIRCULAR</strong></p>
+
+
+
+<p><strong>REF; VIT/PLC/OFF/           /2019-20                                  Dated: 09-10-2019 </strong></p>
+
+
+
+<p><strong>In respect of the students who were rejected in written and Technical round during campus interview conducted in our college.</strong></p>
+
+
+
+<p><strong>Date
+of Off Campus: 15<sup>th</sup> OCT 2019.</strong></p>
+
+
+
+<p><strong>VENUE:
+CHENNAI</strong><strong></strong></p>
+
+
+
+<p><strong>Branches: CSE, ISE, E&amp;C, E&amp;E.</strong></p>
+
+
+
+<p><strong>Eligibility : Should have 75% &amp; above in 10<sup>th</sup>, 12<sup>th</sup>,
+and 7.5 CGPA in B E.</strong></p>
+
+
+
+<p><strong>Registration : Interested &amp; eligible students are to register
+on given on T&amp;P link. The last date for registration is 11<sup>th</sup> OCT
+2019.</strong></p>
+
+
+
+<p><strong>Registration Link……</strong></p>
+
+
+
+<p><a href="https://forms.gle/ZhKjeV4xHSy7mVcG9" rel="nofollow">https://forms.gle/ZhKjeV4xHSy7mVcG9</a></p>
+
+
+
+<p><strong>COPY TO: HOD: </strong><strong>CSE, ISE, E&amp;C, E&amp;E for information please.</strong></p>
+
+
+
+<p><strong>&nbsp;T&amp;P LINK AND NOTICE BOARD</strong></p>
+
+
+
+<p><strong>&nbsp;COPY TO : Principal: For kind perusal please.</strong><strong></strong></p>
+	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-off-campus-drive-by-temenos/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/10/attention-final-year-students-off-campus-drive-by-temenos/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-10T04:14:09+00:00">October 10, 2019</time></a>
+							</span>
+
+			<span class="word-count">1 Minute</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-494" class="post-494 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/greetings-from-kpit-technologies-limited/" rel="bookmark">Greetings from KPIT Technologies Limited&nbsp;!!</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p>This
+is to confirm you that, we have extended offer letters to the following 39
+selected students from KPIT Campus drive 2020. Request you to kindly ask all
+these students to accept &nbsp;our offer letter by clicking on <strong>ACCEPT button
+within 7 days failing which the offer letter gets cancelled automatically.</strong></p>
+
+
+
+<p>Please
+let me know in case of any queries.</p>
+
+
+
+<figure class="wp-block-table"><table class=""><tbody><tr><td>
+  <strong>Source College</strong>
+  </td><td>
+  <strong>Institute ID Number</strong>
+  </td><td>
+  <strong>Name</strong>
+  </td><td>
+  <strong>Email</strong>
+  </td><td>
+  <strong>Mobile Number</strong>
+  </td><td>
+  <strong>Gender</strong>
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE003
+  </td><td>
+  Adithya
+  C Patil
+  </td><td>
+  <a href="mailto:adithyacpatil@gmail.com" target="_blank" rel="noreferrer noopener">adithyacpatil@gmail.com</a>
+  </td><td>
+  9972674498
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC099
+  </td><td>
+  Sarja
+  Pramod Athreya
+  </td><td>
+  <a href="mailto:sarja.pramod98@gmail.com" target="_blank" rel="noreferrer noopener">sarja.pramod98@gmail.com</a>
+  </td><td>
+  9482049356
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC032
+  </td><td>
+  Dennis
+  Prasad
+  </td><td>
+  <a href="mailto:dennisprasad67@gmail.com" target="_blank" rel="noreferrer noopener">dennisprasad67@gmail.com</a>
+  </td><td>
+  9538447443
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC127
+  </td><td>
+  Prajwal
+  Kumar Hr
+  </td><td>
+  <a href="mailto:prajwalrgowda18@gmail.com" target="_blank" rel="noreferrer noopener">prajwalrgowda18@gmail.com</a>
+  </td><td>
+  7022346632
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC089
+  </td><td>
+  Rishav
+  Kumar
+  </td><td>
+  <a href="mailto:rishavworld01@gmail.com" target="_blank" rel="noreferrer noopener">rishavworld01@gmail.com</a>
+  </td><td>
+  8073388200
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE079
+  </td><td>
+  Rajani
+  Achar
+  </td><td>
+  <a href="mailto:rajaniachar98@gmail.com" target="_blank" rel="noreferrer noopener">rajaniachar98@gmail.com</a>
+  </td><td>
+  8296556841
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE006
+  </td><td>
+  Ashutosh
+  Kumar Sinha
+  </td><td>
+  <a href="mailto:ashutoshkumar.sinha12@gmail.com" target="_blank" rel="noreferrer noopener">ashutoshkumar.sinha12@gmail.com</a>
+  </td><td>
+  8861995265
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC123
+  </td><td>
+  Vignesh
+  V
+  </td><td>
+  <a href="mailto:vigneshv2465@gmail.com" target="_blank" rel="noreferrer noopener">vigneshv2465@gmail.com</a>
+  </td><td>
+  9611955333
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE036
+  </td><td>
+  Purva
+  Verma
+  </td><td>
+  <a href="mailto:purvavermakbhp98@gmail.com" target="_blank" rel="noreferrer noopener">purvavermakbhp98@gmail.com</a>
+  </td><td>
+  7004489481
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC080
+  </td><td>
+  Prerana
+  B L
+  </td><td>
+  <a href="mailto:preranabl1998@gmail.com" target="_blank" rel="noreferrer noopener">preranabl1998@gmail.com</a>
+  </td><td>
+  8792353290
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC059
+  </td><td>
+  Manish
+  Maurya
+  </td><td>
+  <a href="mailto:manishmaurya198@gmail.com" target="_blank" rel="noreferrer noopener">manishmaurya198@gmail.com</a>
+  </td><td>
+  9616255307
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC004
+  </td><td>
+  Abhishek
+  Gandham
+  </td><td>
+  <a href="mailto:abhishekgandham98@gmail.com" target="_blank" rel="noreferrer noopener">abhishekgandham98@gmail.com</a>
+  </td><td>
+  9886080671
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC068
+  </td><td>
+  Nikhil
+  Bharadwaj R
+  </td><td>
+  <a href="mailto:robot.nikhilife@gmail.com" target="_blank" rel="noreferrer noopener">robot.nikhilife@gmail.com</a>
+  </td><td>
+  8861310960
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC010
+  </td><td>
+  Anjali
+  Vijayan
+  </td><td>
+  <a href="mailto:anjalivijayan16@gmail.com" target="_blank" rel="noreferrer noopener">anjalivijayan16@gmail.com</a>
+  </td><td>
+  8792279960
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC057
+  </td><td>
+  Mamatha
+  S M
+  </td><td>
+  <a href="mailto:smmamatha99@gmail.com" target="_blank" rel="noreferrer noopener">smmamatha99@gmail.com</a>
+  </td><td>
+  9916651358
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC115
+  </td><td>
+  Tejas
+  S
+  </td><td>
+  <a href="mailto:tejasjetlca@gmail.com" target="_blank" rel="noreferrer noopener">tejasjetlca@gmail.com</a>
+  </td><td>
+  7019822740
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1mv16ec025
+  </td><td>
+  Bodhit
+  Kumar Gupta
+  </td><td>
+  <a href="mailto:bodhit97@gmail.com" target="_blank" rel="noreferrer noopener">bodhit97@gmail.com</a>
+  </td><td>
+  9506961537
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC074
+  </td><td>
+  Pavan
+  H R
+  </td><td>
+  <a href="mailto:pavanhr1999@gmail.com" target="_blank" rel="noreferrer noopener">pavanhr1999@gmail.com</a>
+  </td><td>
+  7760584530
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE063
+  </td><td>
+  Suraj
+  Shivakumar
+  </td><td>
+  <a href="mailto:surajshivakumar53@gmail.com" target="_blank" rel="noreferrer noopener">surajshivakumar53@gmail.com</a>
+  </td><td>
+  9742620541
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC094
+  </td><td>
+  Sagar
+  Subedar
+  </td><td>
+  <a href="mailto:sagarsubedar25@gmail.com" target="_blank" rel="noreferrer noopener">sagarsubedar25@gmail.com</a>
+  </td><td>
+  9611566006
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV
+  </td><td>
+  Varsha
+  N
+  </td><td>
+  <a href="mailto:varshanags@gmail.com" target="_blank" rel="noreferrer noopener">varshanags@gmail.com</a>
+  </td><td>
+  8277075465
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE037
+  </td><td>
+  R
+  Rajath
+  </td><td>
+  <a href="mailto:rajath.raghunath@gmail.com" target="_blank" rel="noreferrer noopener">rajath.raghunath@gmail.com</a>
+  </td><td>
+  8147604043
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE118
+  </td><td>
+  Vijay
+  Vasant Ninganure
+  </td><td>
+  <a href="mailto:vijayvninganure1998@gmail.com" target="_blank" rel="noreferrer noopener">vijayvninganure1998@gmail.com</a>
+  </td><td>
+  9844063534
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC129
+  </td><td>
+  Nishant
+  Nirala
+  </td><td>
+  <a href="mailto:nishantnirala98@gmail.com" target="_blank" rel="noreferrer noopener">nishantnirala98@gmail.com</a>
+  </td><td>
+  7019514821
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC072
+  </td><td>
+  Palash
+  Jain
+  </td><td>
+  <a href="mailto:rajul.palash@gmail.com" target="_blank" rel="noreferrer noopener">rajul.palash@gmail.com</a>
+  </td><td>
+  9538004546
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC014
+  </td><td>
+  Anusha
+  J R
+  </td><td>
+  <a href="mailto:anushajnr2@gmail.com" target="_blank" rel="noreferrer noopener">anushajnr2@gmail.com</a>
+  </td><td>
+  9741554035
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE029
+  </td><td>
+  Neha
+  Sharma
+  </td><td>
+  <a href="mailto:neha831998@gmail.com" target="_blank" rel="noreferrer noopener">neha831998@gmail.com</a>
+  </td><td>
+  9740438605
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16TE021
+  </td><td>
+  Kishore
+  B N
+  </td><td>
+  <a href="mailto:kishorebn1998@gmail.com" target="_blank" rel="noreferrer noopener">kishorebn1998@gmail.com</a>
+  </td><td>
+  9902212534
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE064
+  </td><td>
+  Nitu
+  Kumari
+  </td><td>
+  <a href="mailto:kumarinitu2307@gmail.com" target="_blank" rel="noreferrer noopener">kumarinitu2307@gmail.com</a>
+  </td><td>
+  7717722742
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC130
+  </td><td>
+  Sanjay
+  N
+  </td><td>
+  <a href="mailto:sanjaynsharma1998@gmail.com" target="_blank" rel="noreferrer noopener">sanjaynsharma1998@gmail.com</a>
+  </td><td>
+  9886755864
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC119
+  </td><td>
+  Vachan
+  Srinivas
+  </td><td>
+  <a href="mailto:vachanhassan@gmail.com" target="_blank" rel="noreferrer noopener">vachanhassan@gmail.com</a>
+  </td><td>
+  9483271191
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC091
+  </td><td>
+  Robin
+  K Thomas
+  </td><td>
+  <a href="mailto:robin.tsk7@gmail.com" target="_blank" rel="noreferrer noopener">robin.tsk7@gmail.com</a>
+  </td><td>
+  7406313119
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE099
+  </td><td>
+  Shubhranshu
+  Pandey
+  </td><td>
+  <a href="mailto:01shubhranshu@gmail.com" target="_blank" rel="noreferrer noopener">01shubhranshu@gmail.com</a>
+  </td><td>
+  8197168397
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC036
+  </td><td>
+  Durvesula
+  Revanth
+  </td><td>
+  <a href="mailto:revanth9652@gmail.com" target="_blank" rel="noreferrer noopener">revanth9652@gmail.com</a>
+  </td><td>
+  9492189912
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EC003
+  </td><td>
+  Abhishek
+  Anand
+  </td><td>
+  <a href="mailto:abhishekanand2111@gmail.com" target="_blank" rel="noreferrer noopener">abhishekanand2111@gmail.com</a>
+  </td><td>
+  9471320619
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1mv16ec046
+  </td><td>
+  K
+  Uday Kiran Reddy
+  </td><td>
+  <a href="mailto:udayreddykiran1@gmail.com" target="_blank" rel="noreferrer noopener">udayreddykiran1@gmail.com</a>
+  </td><td>
+  7892873966
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE076
+  </td><td>
+  Rachit
+  Sahay
+  </td><td>
+  <a href="mailto:rachit.sahay25@gmail.com" target="_blank" rel="noreferrer noopener">rachit.sahay25@gmail.com</a>
+  </td><td>
+  7759908468
+  </td><td>
+  Male
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE010
+  </td><td>
+  Anshu
+  Anshu
+  </td><td>
+  <a href="mailto:anshu.jgd21@gmail.com" target="_blank" rel="noreferrer noopener">anshu.jgd21@gmail.com</a>
+  </td><td>
+  9916304140
+  </td><td>
+  Female
+  </td></tr><tr><td>
+  SIR
+  M Visvesvaraya Institute of Technology
+  </td><td>
+  1MV16EE002
+  </td><td>
+  Abhishek
+  Mahendroo
+  </td><td>
+  <a href="mailto:abhishekmahendroo@gmail.com" target="_blank" rel="noreferrer noopener">abhishekmahendroo@gmail.com</a>
+  </td><td>
+  8105042892
+  </td><td>
+  Male
+  </td></tr></tbody></table></figure>
+
+
+
+<p></p>
+
+
+
+<p>________________________________________________<br>
+<strong>KPIT</strong><strong> | Web</strong>: <a href="http://www.kpit.com/" target="_blank" rel="noreferrer noopener">www.kpit.com</a>&nbsp;&nbsp; <strong>Social</strong>:
+<a href="http://www.kpit.com/facebook" target="_blank" rel="noreferrer noopener">Facebook</a> | <a href="http://www.kpit.com/twitter" target="_blank" rel="noreferrer noopener">Twitter</a> | <a href="http://www.kpit.com/linkedin" target="_blank" rel="noreferrer noopener">Linkedin</a> | <a href="http://www.kpit.com/youtube" target="_blank" rel="noreferrer noopener">Youtube</a></p>
+
+
+
+<p>Please
+let me know if you have any queries.</p>
+	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/greetings-from-kpit-technologies-limited/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/03/greetings-from-kpit-technologies-limited/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-03T09:43:32+00:00">October 3, 2019</time></a>
+							</span>
+
+			<span class="word-count">3 Minutes</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-464" class="post-464 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-not-placed-students-registered-for-cognizant/" rel="bookmark">ATTENTION NOT PLACED STUDENTS REGISTERED FOR&nbsp;COGNIZANT!</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p><strong>ATTENTION NOT PLACED STUDENTS REGISTERED FOR COGNIZANT!</strong></p>
+
+
+
+<p><strong>Guidelines by cognizant for the auto-proctored test</strong> :</p>
+
+
+
+<p>&nbsp;• Candidates can take the test on a
+computer/laptop with a functioning web-cam (external or built-in) and
+continuous internet connectivity for the 120-minute duration • We request the
+candidates to take the test where there is ample lighting; It is their responsibility
+to ensure that their image is clearly captured • Each candidate will be
+assigned a unique username and password along with his or her Cognizant
+ID.&nbsp; Company &nbsp;will enable these during the time slot planned
+for your campus • A candidate can attempt the test only once Malpractices: Any
+malpractice will lead to disqualification: If we find any evidence of
+malpractice through mechanisms that we have enabled- that particular candidate
+would be disqualified from the recruitment process as per discretion of the
+Cognizant team If any other person’s image, besides that of the test taker, is
+captured in the vicinity during the test process, that candidate’s test will be
+disqualified as per discretion of the Cognizantteam Please refrain from doing
+the following:• While taking up the online test, please do not move out of the
+test screen- all instances and movements are captured for audit purposes •
+Opening another tab or application like notepad, excel or web browsers like
+Chrome, Firefox etc. are strictly prohibited • Please do not try to click print
+screen or copy the content while the test is in progress- this will lead to
+instant disqualification • Please ensure that the web-cam is not covered with
+any object; The web-cam should be focused on the candidate throughout the test
+duration • Please do not try to take any snapshots while the test in progress •
+Usage of mobile phones, cameras and any other external devices during the
+duration of test is strictly prohibited; the test will automatically be terminated
+upon detection of any external device Interruptions during the test:On the
+event that the test is halted due to internet or electricity failure, the
+candidate will be able to resume his/her assessment from the same point it was
+logged out without losing any time We request the candidates to wait for 5
+minutes and then login again using the same credentials Once logged in, the
+candidates needs to click on ‘Resume Incomplete Test’ and select his/her name
+and continue the test The candidate will be able to login within 2 hours of the
+test being halted The test will expire if the candidate does not login again
+within the 2-hour timeframe </p>
+	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-not-placed-students-registered-for-cognizant/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-not-placed-students-registered-for-cognizant/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-03T06:43:58+00:00">October 3, 2019</time></a>
+							</span>
+
+			<span class="word-count">2 Minutes</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-459" class="post-459 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-final-year-not-placed-students-pool-campus-drive-by-cognizant/" rel="bookmark">ATTENTION FINAL YEAR NOT PLACED STUDENTS!  POOL CAMPUS DRIVE BY&nbsp;COGNIZANT!</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p><strong>TRAINING AND PLACEMENT CELL</strong></p>
+
+
+
+<p><strong>REF:
+VIT/PLC/OFFICE/&#8212;&#8212;-/2019-20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Dated:&nbsp;&nbsp; 03-10-2019</strong></p>
+
+
+
+<p><strong>ATTENTION FINAL YEAR NOT PLACED
+STUDENTS!&nbsp; POOL CAMPUS DRIVE BY
+COGNIZANT!</strong></p>
+
+
+
+<p><strong>POSITION:&nbsp;&nbsp; </strong>Programmer
+Analyst Trainee</p>
+
+
+
+<p>BRANCHES ELIGIBLE:&nbsp; &nbsp;B. Tech / M.
+Tech degree students belonging to CSE / ISE / E&amp;C / E&amp;E / Mechanical
+Engineering only</p>
+
+
+
+<p>Eligibility criteria : 60% and above in 10th ,
+12th, Diploma UG &amp; PG (all subjects taken into consideration ) •No
+outstanding arrears in current education •Maximum 2 years gap in education
+•Minimum 60% aggregate in the pursuing degree •Any student waiting for
+re-evaluation would be considered only with initial results •Appropriate CGPA
+to % will be considered as per university norms • •Strong written and
+communication skills •Open only to Indian nationals• candidates must be
+flexible to relocate to anywhere in India or work in any shift / domain as this
+will be determined based on business demand</p>
+
+
+
+<p>COMPENSATION&nbsp;&nbsp;
+PACKAGE:&nbsp; INR 4,00,000 per annum</p>
+
+
+
+<p>SELECTION PROCESS:&nbsp; &nbsp;online test
+covering Analytical, Verbal and Programming modules. Shortlisted students will
+be invited for two rounds of personal interviews (Technical and HR)</p>
+
+
+
+<p><strong>Last date for Registration is
+04/10/2019 on the following link:</strong></p>
+
+
+
+<p><a href="https://forms.gle/u7K8nj93AMk97zos9" rel="nofollow">https://forms.gle/u7K8nj93AMk97zos9</a></p>
+
+
+
+<p><strong>STRONG WARNING!</strong><strong>&nbsp;&nbsp;&nbsp; Only fully &nbsp;&nbsp;&nbsp;Eligible students with CGPA as per VTU norms
+are to register.&nbsp; If any student is found
+tampering with their marks or any other eligibility criteria in registration
+process, that student will be totally debarred from all campus recruitment
+opportunities and their parents will be informed immediately with complete
+dossier of their activities. Even .1 deficiencies will not be accepted by the
+company. All must ensure strict compliance of the company policy while doing
+registration.</strong><strong></strong></p>
+
+
+
+<p><strong>TO:&nbsp;&nbsp;
+CSE, ISE, E&amp;C, E&amp;E, Mechanical branches&#8212;For information to
+students please</strong></p>
+
+
+
+<p><strong>T&amp;P link and notice board</strong></p>
+
+
+
+<p><strong>COPY TO:&nbsp; PRINCIPAL:&nbsp;
+For kind perusal please</strong></p>
+	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-final-year-not-placed-students-pool-campus-drive-by-cognizant/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/03/attention-final-year-not-placed-students-pool-campus-drive-by-cognizant/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-03T06:39:42+00:00">October 3, 2019</time></a>
+							</span>
+
+			<span class="word-count">1 Minute</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-454" class="post-454 post type-post status-publish format-standard hentry category-uncategorized">
+			<header class="entry-header">
+			<h1 class="entry-title"><a href="https://sirmvitplacements2020.home.blog/2019/10/01/attention-not-placed-students-from-below-mentioned-branches/" rel="bookmark">Attention NOT PLACED Students from below Mentioned&nbsp;Branches.</a></h1>		</header><!-- .entry-header -->	
+	<div class="entry-content">
+		
+<p> The Students who are NOT PLACED till now from the below branches mentioned have to register in the given link below.</p>
+
+
+
+<p> <strong>Registration Link….. </strong></p>
+
+
+
+<p><a href="https://forms.gle/TdC9TTDqLnFQNLBM7" rel="nofollow">https://forms.gle/TdC9TTDqLnFQNLBM7</a></p>
+
+
+
+<p><strong>The Branches: ME, CV, TE, BT, IEM.</strong></p>
+
+
+
+<p> <strong>DIRECTOR: T&amp;P CELL </strong></p>
+	</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		
+				<div class="entry-meta">
+			<span class="byline">
+				<a href="https://sirmvitplacements2020.home.blog/author/sirmvitplacements/" title="Posts by Sir MVIT Training &#038; Placement Cell" rel="author">Sir MVIT Training &#38; Placement Cell</a>			</span>
+							<span class="cat-links">
+					<a href="https://sirmvitplacements2020.home.blog/category/uncategorized/" rel="category tag">Uncategorized</a>				</span><!-- .cat-links -->
+			
+			<span class="comments-link"><a href="https://sirmvitplacements2020.home.blog/2019/10/01/attention-not-placed-students-from-below-mentioned-branches/#respond">Leave a comment</a></span><!-- .comments-link -->
+			<span class="published-on">
+									<a href="https://sirmvitplacements2020.home.blog/2019/10/01/attention-not-placed-students-from-below-mentioned-branches/" rel="bookmark"><time class="entry-date published updated" datetime="2019-10-01T04:24:41+00:00">October 1, 2019</time></a>
+							</span>
+
+			<span class="word-count">0 Minutes</span>		</div><!-- .entry-meta -->
+		</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+
+			
+			
+	<nav class="navigation posts-navigation" role="navigation">
+		<h2 class="screen-reader-text">Posts navigation</h2>
+		<div class="nav-links"><div class="nav-previous"><a href="https://sirmvitplacements2020.home.blog/page/2/" >Older posts</a></div></div>
+	</nav>
+		
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+		</div><!-- #content -->
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+						<div class="site-info">
+				<a href="https://wordpress.com/?ref=footer_segment_blog" rel="nofollow">Blog at WordPress.com.</a>
+				
+							</div><!-- .site-info -->
+		</footer><!-- #colophon -->
+	</div><!-- #content-wrapper -->
+</div><!-- #page -->
+
+		<script type="text/javascript">
+		//<![CDATA[
+		var infiniteScroll = JSON.parse( decodeURIComponent( '%7B%22settings%22%3A%7B%22id%22%3A%22main%22%2C%22ajaxurl%22%3A%22https%3A%5C%2F%5C%2Fsirmvitplacements2020.home.blog%5C%2F%3Finfinity%3Dscrolling%22%2C%22type%22%3A%22scroll%22%2C%22wrapper%22%3Atrue%2C%22wrapper_class%22%3A%22infinite-wrap%22%2C%22footer%22%3A%22page%22%2C%22click_handle%22%3A%221%22%2C%22text%22%3A%22Older%20posts%22%2C%22totop%22%3A%22Scroll%20back%20to%20top%22%2C%22currentday%22%3A%2201.10.19%22%2C%22order%22%3A%22DESC%22%2C%22scripts%22%3A%5B%5D%2C%22styles%22%3A%5B%5D%2C%22google_analytics%22%3Afalse%2C%22offset%22%3A0%2C%22history%22%3A%7B%22host%22%3A%22sirmvitplacements2020.home.blog%22%2C%22path%22%3A%22%5C%2Fpage%5C%2F%25d%5C%2F%22%2C%22use_trailing_slashes%22%3Atrue%2C%22parameters%22%3A%22%22%7D%2C%22query_args%22%3A%7B%22error%22%3A%22%22%2C%22m%22%3A%22%22%2C%22p%22%3A0%2C%22post_parent%22%3A%22%22%2C%22subpost%22%3A%22%22%2C%22subpost_id%22%3A%22%22%2C%22attachment%22%3A%22%22%2C%22attachment_id%22%3A0%2C%22name%22%3A%22%22%2C%22pagename%22%3A%22%22%2C%22page_id%22%3A0%2C%22second%22%3A%22%22%2C%22minute%22%3A%22%22%2C%22hour%22%3A%22%22%2C%22day%22%3A0%2C%22monthnum%22%3A0%2C%22year%22%3A0%2C%22w%22%3A0%2C%22category_name%22%3A%22%22%2C%22tag%22%3A%22%22%2C%22cat%22%3A%22%22%2C%22tag_id%22%3A%22%22%2C%22author%22%3A%22%22%2C%22author_name%22%3A%22%22%2C%22feed%22%3A%22%22%2C%22tb%22%3A%22%22%2C%22paged%22%3A0%2C%22meta_key%22%3A%22%22%2C%22meta_value%22%3A%22%22%2C%22preview%22%3A%22%22%2C%22s%22%3A%22%22%2C%22sentence%22%3A%22%22%2C%22title%22%3A%22%22%2C%22fields%22%3A%22%22%2C%22menu_order%22%3A%22%22%2C%22embed%22%3A%22%22%2C%22category__in%22%3A%5B%5D%2C%22category__not_in%22%3A%5B%5D%2C%22category__and%22%3A%5B%5D%2C%22post__in%22%3A%5B%5D%2C%22post__not_in%22%3A%5B%5D%2C%22post_name__in%22%3A%5B%5D%2C%22tag__in%22%3A%5B%5D%2C%22tag__not_in%22%3A%5B%5D%2C%22tag__and%22%3A%5B%5D%2C%22tag_slug__in%22%3A%5B%5D%2C%22tag_slug__and%22%3A%5B%5D%2C%22post_parent__in%22%3A%5B%5D%2C%22post_parent__not_in%22%3A%5B%5D%2C%22author__in%22%3A%5B%5D%2C%22author__not_in%22%3A%5B%5D%2C%22posts_per_page%22%3A7%2C%22ignore_sticky_posts%22%3Afalse%2C%22suppress_filters%22%3Afalse%2C%22cache_results%22%3Afalse%2C%22update_post_term_cache%22%3Atrue%2C%22lazy_load_term_meta%22%3Atrue%2C%22update_post_meta_cache%22%3Atrue%2C%22post_type%22%3A%22%22%2C%22nopaging%22%3Afalse%2C%22comments_per_page%22%3A%2250%22%2C%22no_found_rows%22%3Afalse%2C%22order%22%3A%22DESC%22%7D%2C%22last_post_date%22%3A%222019-10-01%2004%3A24%3A41%22%2C%22stats%22%3A%22blog%3D162950147%26v%3Dwpcom%26tz%3D0%26user_id%3D0%26subd%3Dsirmvitplacements2020home%26x_pagetype%3Dinfinite%22%7D%7D' ) );
+		//]]>
+		</script>
+		<!--  -->
+<div id="wpadminbar" class="marketing-bar"><div class="marketing-bar-text">Create your website at WordPress.com</div><a class="marketing-bar-button" href="https://wordpress.com/?ref=marketing_bar">Get started</a></div><script type='text/javascript' src='//0.gravatar.com/js/gprofiles.js?ver=201942y'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781h'></script>
+
+	<script>
+		//initialize and attach hovercards to all gravatars
+		jQuery( document ).ready( function( $ ) {
+
+			if (typeof Gravatar === "undefined"){
+				return;
+			}
+
+			if ( typeof Gravatar.init !== "function" ) {
+				return;
+			}			
+
+			Gravatar.profile_cb = function( hash, id ) {
+				WPGroHo.syncProfileData( hash, id );
+			};
+			Gravatar.my_hash = WPGroHo.my_hash;
+			Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+		});
+	</script>
+
+		<div style="display:none">
+	</div>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/sirmvitplacements2020home.wordpress.com\/public.api\/connect\/?action=request&domain=sirmvitplacements2020.home.blog","logoutURL":"https:\/\/sirmvitplacements2020home.wordpress.com\/wp-login.php?action=logout&_wpnonce=2c1fb1fef7","homeURL":"https:\/\/sirmvitplacements2020.home.blog\/","postID":"535","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"0","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/_static/??/wp-content/js/jquery/jquery.autoresize.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1551752381j'></script>
+		<div id="infinite-footer">
+			<div class="container">
+				<div class="blog-info">
+					<a id="infinity-blog-title" href="https://sirmvitplacements2020.home.blog/" rel="home">
+						sirmvitplacements2020.wordpress.com					</a>
+				</div>
+				<div class="blog-credits">
+					<a href="https://wordpress.com/?ref=footer_segment_blog" rel="nofollow">Blog at WordPress.com.</a> 				</div>
+			</div>
+		</div><!-- #infinite-footer -->
+		<div class="widget widget_eu_cookie_law_widget"><div
+	class="hide-on-button ads-active"
+	data-hide-timeout="30"
+	data-consent-expiration="180"
+	id="eu-cookie-law"
+>
+	<form method="post">
+		<input type="submit" value="Close and accept" class="accept" />
+
+		Privacy &amp; Cookies: This site uses cookies. By continuing to use this website, you agree to their use. <br />
+To find out more, including how to control cookies, see here:
+		<a href="https://automattic.com/cookies" >
+			Cookie Policy		</a>
+ </form>
+</div>
+</div>
+	<div id="carousel-reblog-box">
+		<form action="#" name="carousel-reblog">
+			<textarea id="carousel-reblog-content" name="carousel-reblog-content" placeholder="Add your thoughts here... (optional)"></textarea>
+			<label for="carousel-reblog-to-blog-id" id="carousel-reblog-lblogid">Post to</label>
+			<select name="carousel-reblog-to-blog-id" id="carousel-reblog-to-blog-id">
+						</select>
+
+			<div class="submit">
+				<span class="canceltext"><a href="#" class="cancel">Cancel</a></span>
+				<input type="submit" name="carousel-reblog-submit" class="button" id="carousel-reblog-submit" value="Reblog Post" />
+				<input type="hidden" id="carousel-reblog-blog-id" value="162950147" />
+				<input type="hidden" id="carousel-reblog-blog-url" value="https://sirmvitplacements2020.home.blog" />
+				<input type="hidden" id="carousel-reblog-blog-title" value="sirmvitplacements2020.wordpress.com" />
+				<input type="hidden" id="carousel-reblog-post-url" value="" />
+				<input type="hidden" id="carousel-reblog-post-title" value="" />
+			</div>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="40f7ea7b37" /><input type="hidden" name="_wp_http_referer" value="/" />		</form>
+
+		<div class="arrow"></div>
+	</div>
+<link rel='stylesheet' id='all-css-0-3' href='https://s1.wp.com/_static/??/wp-content/mu-plugins/carousel/jetpack-carousel.css,/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css?m=1563361695j&cssminify=yes' type='text/css' media='all' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var actionbardata = {"siteID":"162950147","siteName":"sirmvitplacements2020.wordpress.com","siteURL":"https:\/\/sirmvitplacements2020.home.blog","icon":"<img alt='' src='https:\/\/s2.wp.com\/i\/logo\/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' \/>","canManageOptions":"","canCustomizeSite":"","isFollowing":"","themeSlug":"pub\/independent-publisher-2","signupURL":"https:\/\/wordpress.com\/start\/","loginURL":"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Fsirmvitplacements2020.home.blog%2F2019%2F10%2F14%2Fattention-students-registered-for-cognizant%2F&signup_flow=account&domain=sirmvitplacements2020.home.blog","themeURL":"https:\/\/wordpress.com\/theme\/independent-publisher-2\/","xhrURL":"https:\/\/sirmvitplacements2020.home.blog\/wp-admin\/admin-ajax.php","nonce":"00c74cb498","isSingular":"","isFolded":"","isLoggedIn":"","isMobile":"","subscribeNonce":"<input type=\"hidden\" id=\"_wpnonce\" name=\"_wpnonce\" value=\"09ff25e485\" \/>","referer":"https:\/\/sirmvitplacements2020.home.blog\/","canFollow":"1","feedID":"96524229","statusMessage":"","customizeLink":"https:\/\/sirmvitplacements2020home.wordpress.com\/wp-admin\/customize.php?url=https%3A%2F%2Fsirmvitplacements2020home.wordpress.com%2F","i18n":{"view":"View site","follow":"Follow","following":"Following","edit":"Edit","login":"Log in","signup":"Sign up","customize":"Customize","report":"Report this content","themeInfo":"Get theme: Independent Publisher 2","shortlink":"Copy shortlink","copied":"Copied","followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar","editSubs":"Manage subscriptions","viewReader":"View site in Reader","viewReadPost":"View post in Reader","subscribe":"Sign me up","enterEmail":"Enter your email address","followers":"Join 456 other followers","alreadyUser":"Already have a WordPress.com account? <a href=\"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Fsirmvitplacements2020.home.blog%2F2019%2F10%2F14%2Fattention-students-registered-for-cognizant%2F&signup_flow=account&domain=sirmvitplacements2020.home.blog\">Log in now.<\/a>","stats":"Stats"}};
+/* ]]> */
+</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/sirmvitplacements2020.home.blog\/wp-admin\/admin-ajax.php","nonce":"8b672d5292","display_exif":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/sirmvitplacements2020home.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fsirmvitplacements2020.home.blog%2F2019%2F10%2F01%2Fattention-not-placed-students-from-below-mentioned-branches%2F","blog_id":"162950147","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"local_comments_commenting_as":"<fieldset><label for=\"email\">Email (Required)<\/label> <input type=\"text\" name=\"email\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-email-field\" \/><\/fieldset><fieldset><label for=\"author\">Name (Required)<\/label> <input type=\"text\" name=\"author\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-author-field\" \/><\/fieldset><fieldset><label for=\"url\">Website<\/label> <input type=\"text\" name=\"url\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-url-field\" \/><\/fieldset>","reblog":"Reblog","reblogged":"Reblogged","reblog_add_thoughts":"Add your thoughts here... (optional)","reblogging":"Reblogging...","post_reblog":"Post Reblog","stats_query_args":"blog=162950147&v=wpcom&tz=0&user_id=0&subd=sirmvitplacements2020home","is_public":"1","reblog_enabled":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://s2.wp.com/_static/??-eJydkltOxDAMRTeECYNENXwg1pJJ3NZtXsROy+yeVKIVFFHB/ER+3RPrJmpOYGIQDKIGVhYnMpje7we+U19avkBypaPAytGIrN4KFux1sA7zwTCFlgLJdQv2s9Kjr7hULnXEYsJ6BIGaO+IeMzwuawU9UaeFYrhN/0vrNhiPlMBRGKGNpjC09MOuP4AoGMUmUxKYk4n+wMSZbIfCCkvtxpEQnJ6VoE9OC+7qBxxtPQW46Ky8ZsFcI4gT5ky2UrbaPwmStRn5SGSWh1tEW7ROVxNcWS5fbJ3beBnQyB61cqa6ZlSaefFi+MxTRj663OgcC6NTA0qqi8JaONAIObTQaVf/9vV7VlWv/uX01Dyfm/NDcxo+AEw3OOQ='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script type="text/javascript">
+			jQuery.extend( infiniteScroll.settings.scripts, ["jquery-core","jquery-migrate","jquery","postmessage","mobile-useragent-info","jquery_inview","jetpack_resize","spin","jquery.spin","grofiles-cards","wpgroho","jquery.autoresize","highlander-comments","devicepx","jetpack_likes_queuehandler","the-neverending-homepage","independent-publisher-2-navigation","independent-publisher-2-images","independent-publisher-2-skip-link-focus-fix","independent-publisher-2-wpcom-functions","eu-cookie-law-script","wpcom-masterbar-js","wpcom-masterbar-tracks-js","wpcom-actionbar-bar","swfobject","videopress","jetpack-carousel","tiled-gallery"] );
+			jQuery.extend( infiniteScroll.settings.styles, ["wpcom-smileys","free-site-marketing-bar","wordads-global","jetpack_likes","the-neverending-homepage","wp-block-library","tinker-blocks","coblocks-frontend","posts-list-block-style","wpcom-core-compat-playlist-styles","wpcom-bbpress2-staff-css","genericons","independent-publisher-2-style","independent-publisher-2-block-style","independent-publisher-2-wpcom-style","eu-cookie-law-style","noticons","geo-location-flair","reblogging","a8c-global-print","wpcom-actionbar-bar","h4-global","highlander-comments","highlander-comments-ie7","jetpack-carousel","tiled-gallery"] );
+		</script><script src="//stats.wp.com/w.js?60" type="text/javascript" async defer></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'162950147','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'162950147','v':'wpcom','tz':'0','user_id':'0','subd':'sirmvitplacements2020home'}]);
+_stq.push(['extra', {'crypt':'UE5XaGUuOTlwaD85flAmcm1mcmZsaDhkV11YdWFnNncxc1tjZG9XVXhRU1I2fH5qamxuMVpFZHZ+dStha3RIcS11djQxV2JuNHR3VzZ8UTFGOU5xME5bem1iNGhufl15S3wvdkZbNlpnMHlSQV1nMm1bUTBoeEZlVmVYdlN3TVk0bW9VazhyYWIsaFp5Si9NSnpfU1g0RnUuZmJRLnAwVS0xWTJFZWlSW1VIMUVLMVd8OVpFZUglS3ZocFYxRGF4YXVtJW5IYz1bSW1pSm41OCtpN1FbP0o2UkUuWiZtQldoX0lRZnNxT3RaZnd2UmhDK1Q4SDFiT3V8SXw2RzguMms='}]);
+_stq.push([ 'clickTrackerInit', '162950147', '0' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>
+<!--
+	generated in 0.100 seconds
+	70948 bytes batcached for 300 seconds
+-->
