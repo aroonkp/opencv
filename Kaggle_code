@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Kaggle: Your Home for Data Science</title>
+    <meta charset="utf-8" />
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="Download Open Datasets on 1000s of Projects + Share Projects on One Platform. Explore Popular Topics Like Government, Sports, Medicine, Fintech, Food, More. Flexible Data Ingestion." />
+    <meta name="turbolinks-cache-control" content="no-cache" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">    <meta name="theme-color" content="#008ABC" />
+    <script type="text/javascript">
+        window["initialPageLoadStartTime"] = new Date().getTime();
+    </script>
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" /><link rel="dns-prefetch" href="https://stats.g.doubleclick.net" /><link rel="dns-prefetch" href="https://js.intercomcdn.com" /><link rel="dns-prefetch" href="https://storage.googleapis.com/" />
+    <link href="/static/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="manifest" href="/static/json/manifest.json">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic" rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Google+Material+Icons" rel="stylesheet" type='text/css'/>
+                    <link rel="stylesheet" type="text/css" href="/static/assets/vendor.css?v=72379e1be335" />
+        <link rel="stylesheet" type="text/css" href="/static/assets/app.css?v=211f106fbf6b" />
+    
+    
+ 
+        <script>
+        try{(function(a,s,y,n,c,h,i,d,e){d=s.createElement("style");
+        d.appendChild(s.createTextNode(""));s.head.appendChild(d);d=d.sheet;
+        y=y.map(x => d.insertRule(x + "{ opacity: 0 !important }"));
+        h.start=1*new Date;h.end=i=function(){y.forEach(x => x<d.cssRules.length ? d.deleteRule(x) : {})};
+        (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
+        })(window,document,['.site-header-react__nav'],'dataLayer',2000,{'GTM-52LNT9S':true});}catch{}
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-12629138-1', {
+            'optimize_id': 'GTM-52LNT9S',
+            'displayFeaturesTask': null,
+            'send_page_view': false
+        });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-12629138-1"></script>
+
+    
+<script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+    fbq("set", "autoConfig", "false", "136809193586742");
+    fbq('init', '136809193586742'); 
+    fbq('track', 'PageView');
+</script>
+<noscript>
+    <img height="1" width="1" src="https://www.facebook.com/tr?id=136809193586742&ev=PageView&noscript=1"/>
+</noscript>
+
+<script>window.intercomSettings = {"app_id":"koj6gxx6","name":"Arun Kumar","email":"arunkp1995@gmail.com","user_hash":"4c2da3b461497bfa0b0dc6ffb180bdec9ce5395472e75192063792baf378b195","created_at":1553166654,"last_visit_date_at":1571161364,"status_id":2,"performance_tier":1,"user_name":"aroonkp","display_name":"Arun Kumar","is_admin":false,"experiment_group":1,"newsletter_subscriber":true,"competition_mailing_list_subscriber":true,"block_emails":false,"competitions_tier":1,"competitions_tier_attained_at":1569396047,"kernels_tier":1,"kernels_tier_attained_at":1569396047,"discussion_tier":1,"discussion_tier_attained_at":1569396047,"datasets_count":0,"host_page_visits":3,"in_class_competitions_hosted_count":0,"last_hour_searches_count":0,"api_has_token":false,"api_has_requests":false};</script>        <script>(function () { var w = window; var ic = w.Intercom; if (typeof ic === "function") { ic('reattach_activator'); ic('update', intercomSettings); } else { var d = document; var i = function () { i.c(arguments) }; i.q = []; i.c = function (args) { i.q.push(args) }; w.Intercom = i; function l() { var s = d.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://widget.intercom.io/widget/koj6gxx6'; var x = d.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); } if (w.attachEvent) { w.attachEvent('onload', l); } else { w.addEventListener('load', l, false); } } })()</script>
+    
+    
+
+    
+    
+
+    
+    
+    
+<script type="text/javascript">
+    var Kaggle = Kaggle || {};
+
+    Kaggle.Current = {
+        userId: 2972933,
+        userProfileUrl: '/aroonkp',
+        userDisplayNameEscaped: 'Arun Kumar',
+        userThumbnailUrl: 'https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg',
+        userEmail: 'arunkp1995@gmail.com',
+        userIsPhoneVerified: true,
+        userName: 'aroonkp',
+        tier: 'Contributor',
+        antiForgeryToken: 'CfDJ8LdUzqlsSWBPr4Ce3rb9VL_QwpCD4qI6jyQjd2vOxi2ddIiXgyeuY1tHhv7nVkAf8t__aMwOJobivXkG-5aieQTGJCN-cdRAEYiojf1TvTZWohsRCsPTsPJ100KwG9bNZOzpUdOIyf6Ds9l_K8ZBDtEusX0EfULjuBy_IFneNJ9CUHYuJnw7iY3DYVRjuowmow',
+        isAnonymous: false,
+        analyticsToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzExNjIyODcsIlVzZXJJZCI6Mjk3MjkzM30.k5khi5l9JYxHquxmHBBl4AK_T8-MQw1639jJW7okOfk',
+        analyticsTokenExpiry: 15,
+        internetKernelsEnabled: true,
+        
+        
+        
+        
+        
+        
+        mdeImageUploader: true,
+        
+        
+        
+    }
+        Kaggle.Current.log = function(){};
+        Kaggle.Current.warn = function(){};
+
+    var decodeUserDisplayName = function () {
+        var escapedUserDisplayName = Kaggle.Current.userDisplayNameEscaped || "";
+        try {
+            var textVersion = new DOMParser().parseFromString(escapedUserDisplayName, "text/html").documentElement.textContent;
+            if (textVersion) {
+                return textVersion;
+            }
+        } catch(ex) {}
+        return escapedUserDisplayName;
+    }
+    Kaggle.Current.userDisplayName = decodeUserDisplayName();
+</script>
+
+    
+
+<script type="text/javascript">
+    var Kaggle = Kaggle || {};
+    Kaggle.PageMessages = [];
+</script>
+
+    
+<script type="text/javascript">
+/* <![CDATA[ */
+goog_snippet_vars = function() {
+    var w = window;
+    w.google_conversion_id = 955616553;
+    w.google_conversion_label = "QSjvCKDksHMQqZrWxwM";
+    w.google_conversion_value = 0.00;
+    w.google_conversion_currency = "USD";
+    w.google_remarketing_only = false;
+    w.google_conversion_language = "en";
+    w.google_conversion_format = "3";
+    w.google_conversion_color = "ffffff";
+}
+// DO NOT CHANGE THE CODE BELOW.
+goog_report_conversion = function(url) {
+    goog_snippet_vars();
+    window.google_conversion_format = "3";
+    var opt = new Object();
+    opt.onload_callback = function() {
+        if (typeof(url) != 'undefined') {
+            window.location = url;
+        }
+    }
+    var conv_handler = window['google_trackConversion'];
+    if (typeof(conv_handler) == 'function') {
+        conv_handler(opt);
+    }
+}
+/* ]]> */
+</script>
+<script type="text/javascript"
+src="//www.googleadservices.com/pagead/conversion_async.js">
+</script>
+
+
+
+        <script>window['useKaggleAnalytics'] = true;</script>
+
+    <script src="/static/assets/vendor.js?v=9a89d3a0833a" data-turbolinks-track="reload"></script>
+    <script src="/static/assets/app.js?v=cf07ed886985" data-turbolinks-track="reload"></script>
+        <script>
+            (function() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register("/static/assets/service-worker.js").then(function(reg) {
+                        reg.onupdatefound = function() {
+                            var installingWorker = reg.installing;
+                            installingWorker.onstatechange = function() {
+                                switch (installingWorker.state) {
+                                case 'installed':
+                                    if (navigator.serviceWorker.controller) {
+                                        console.log('New or updated content is available.');
+                                    } else {
+                                        console.log('Content is now available offline!');
+                                    }
+                                    break;
+                                case 'redundant':
+                                    console.error('The installing service worker became redundant.');
+                                    break;
+                                }
+                            };
+                        };
+                    }).catch(function(e) {
+                      console.error('Error during service worker registration:', e);
+                    });
+                }
+            })();
+        </script>
+    <script>
+        function handleClientLoad() {
+            try {
+                gapi.load('client:auth2');
+            } catch (e) {
+                // In Opera, readystatechange is an unreliable detection of script load, causing
+                // this function to be called before gapi exists on the window. The onload callback
+                // is still called at the correct time, so the feature works as expected - it's
+                // just generating noisy errors.
+            }
+        }
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js"
+            onload="this.googleApiOnLoad=function(){};handleClientLoad()"
+            onreadystatechange="if (this.readyState === 'complete') this.googleApiOnLoad()">
+    </script>
+            <script defer src="https://cdn.jsdelivr.net/npm/stackdriver-errors-js@0.7.0/dist/stackdriver-errors-concat.min.js"></script>
+        <script type="text/javascript">
+            window.addEventListener('DOMContentLoaded', function () {
+                var errorHandler = new StackdriverErrorReporter();
+                errorHandler.start({
+                    key: 'AIzaSyDANGXFHtSIVc51MIdGwg4mQFgm3oNrKoo',
+                    projectId: 'kaggle-161607',
+                    service: 'web-fe',
+                    version: 'bcef35ec8c80bf1d373584c805aa5701d16dc097',
+                    context: { user: '2972933' }
+                });
+            });
+        </script>
+</head>
+<body data-turbolinks="true">
+    <main>
+        
+
+
+
+
+
+
+<div class="site-layout">
+        <div class="site-layout__header">
+            <div data-component-name="SiteHeaderContainer" style="display: flex; flex-direction: column; flex: 1 0 auto;"></div><script>var Kaggle=window.Kaggle||{};Kaggle.State=Kaggle.State||[];Kaggle.State.push({});performance && performance.mark && performance.mark("SiteHeaderContainer.componentCouldBootstrap");</script>
+        </div>
+
+    <div class="site-layout__main-content">
+        
+
+<div data-component-name="Newsfeed" style="display: flex; flex-direction: column; flex: 1 0 auto;"></div><script>var Kaggle=window.Kaggle||{};Kaggle.State=Kaggle.State||[];Kaggle.State.push({"stories":[],"userName":"Arun Kumar","avatarUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","userUrl":"/aroonkp","userTier":"contributor","userJoinDate":"2019-03-21T11:10:54.703Z","banneredJob":{"company":"Seamless Machine Learning","location":"Cambridge, UK","position":"Data Scientist / Data Engineer","postUrl":"/jobs/19672/data-scientist-data-engineer","imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19672/thumb_ss_logo.png"},"progression":{"currentCompetitionTier":"contributor","currentDiscussionTier":"contributor","currentKernelTier":"contributor","nextCompetitionTier":"expert","nextDiscussionTier":"expert","nextKernelTier":"expert","isContributorOrHigher":true,"currentCompetitionRanking":null,"currentDiscussionRanking":null,"currentKernelRanking":null,"contributorChecklist":[],"competitionChecklist":[{"type":"competition","name":"0/2 bronze medals","isComplete":false,"targetUrl":null}],"kernelChecklist":[{"type":"scripts","name":"0/5 bronze medals","isComplete":false,"targetUrl":null}],"discussionChecklist":[{"type":"discussions","name":"1/50 bronze medals","isComplete":false,"targetUrl":null}],"competitionProgress":0.0,"discussionProgress":0.02,"kernelProgress":0.0},"competitionSidebarList":[{"imageUrl":"https://storage.googleapis.com/kaggle-competitions/kaggle/3004/logos/thumb76_76.png","title":"Digit Recognizer","linkUrl":"/c/digit-recognizer","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2012-07-17T21:13:59.5539663Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-competitions/kaggle/3136/logos/thumb76_76.png","title":"Titanic: Machine Learning from Disaster","linkUrl":"/c/titanic","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2012-09-14T16:40:22.6041741Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-competitions/kaggle/5407/logos/thumb76_76.png","title":"House Prices: Advanced Regression Techniques","linkUrl":"/c/house-prices-advanced-regression-techniques","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2016-08-25T18:46:54.7226254Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-competitions/kaggle/8587/logos/thumb76_76.png","title":"Predict Future Sales","linkUrl":"/c/competitive-data-science-predict-future-sales","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2018-02-17T02:03:24.9498691Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-competitions/kaggle/14999/logos/thumb76_76.png","title":"Categorical Feature Encoding Challenge","linkUrl":"/c/cat-in-the-dat","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-06-13T03:52:19.3136475Z"}],"datasetSidebarList":[{"imageUrl":"https://storage.googleapis.com/kaggle-datasets-images/new-version-temp-images/default-backgrounds-71.png-2972933/dataset-thumbnail.png","title":"twitterAnalysisDataset","linkUrl":"/aroonkp/twitteranalysisdataset","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-07T18:53:53.043Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-datasets-images/new-version-temp-images/default-backgrounds-97.png-2972933/dataset-thumbnail.png","title":"twitterdataset11","linkUrl":"/aroonkp/twitterdataset11","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-07T18:52:11.85Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-datasets-images/new-version-temp-images/default-backgrounds-79.png-2972933/dataset-thumbnail.png","title":"TwitterDataset","linkUrl":"/aroonkp/twitterdataset","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-07T18:47:48.647Z"}],"kernelSidebarList":[{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"Titanic: Simplest solution [Top 12%]","linkUrl":"/aroonkp/titanic-simplest-solution-top-12","icon":"code-fork","iconTitle":"Forked from: kernel468ba2863d","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-09-19T14:59:02.7615095Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"Fork of kernel1e81e8326e","linkUrl":"/aroonkp/fork-of-kernel1e81e8326e","icon":"code-fork","iconTitle":"Forked from: [Deleted Kernel]","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-03T07:15:49.7126957Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"kernel5a5d8ce653","linkUrl":"/aroonkp/kernel5a5d8ce653","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-06T05:25:36.5320226Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"twitter_sentiment_analysis","linkUrl":"/aroonkp/twitter-sentiment-analysis","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-07T18:32:48.7147268Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"Don\u0027t Overfit","linkUrl":"/aroonkp/don-t-overfit","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-08T05:11:31.2213018Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"Don\u0027t Overfit [with 0.779 accuracy]","linkUrl":"/aroonkp/don-t-overfit-with-0-779-accuracy","icon":"code-fork","iconTitle":"Forked from: kernel383bc1fb2b","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-08T06:44:33.4636413Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"kernel6dce9b574a","linkUrl":"/aroonkp/kernel6dce9b574a","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-08T07:21:25.9944276Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"kernel5e0d543a7a","linkUrl":"/aroonkp/kernel5e0d543a7a","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-08T10:23:35.8544086Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"Fork of kernel5e0d543a7a","linkUrl":"/aroonkp/fork-of-kernel5e0d543a7a","icon":"code-fork","iconTitle":"Forked from: kernel5e0d543a7a","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-08T16:58:55.0741866Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-avatars/thumbnails/2972933-kg.jpg","title":"kernel2866cb96e0","linkUrl":"/aroonkp/kernel2866cb96e0","icon":null,"iconTitle":"Forked from: ","iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-09T01:36:31.8069077Z"}],"jobsBoardSidebarList":[{"imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19765/thumb_logo-bild3-1.png","title":"Thinksurance GmbH, Frankfurt, Germany","linkUrl":"/jobs/19765/senior-data-architect-m-f-d-65k-80k-eur","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-14T08:44:16.7402831Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19766/thumb_helmholtz.jpg","title":"Helmholtz Zentrum München - Deutsches Forschungszentrum für Gesundheit und Umwelt (GmbH), Oberschleißheim, Germany","linkUrl":"/jobs/19766/young-investigator-group-leaders-f-m-d-in-artificial-intelligence-an","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-14T13:59:59.2507564Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19767/thumb_Screen Shot 2019-10-14 at 7.15.18 PM.png","title":"Perengo, New York, NY, USA","linkUrl":"/jobs/19767/remote-us-de-es-data-scientist","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-15T00:56:38.9742926Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19768/thumb_CMAlogo96x96.jpg","title":"Competition and Markets Authority, London, UK","linkUrl":"/jobs/19768/lead-data-scientist-assistant-director","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-15T14:25:51.8011899Z"},{"imageUrl":"https://storage.googleapis.com/kaggle-jobs-board/posts/19769/thumb_BrandLoyalty_HappyPeople_Black.jpg","title":"BrandLoyalty, Den Bosch, Netherlands","linkUrl":"/jobs/19769/business-intelligence-specialist-azure","icon":null,"iconTitle":null,"iconRight":null,"iconRightTitle":null,"dateCreated":"2019-10-15T15:05:13.2350686Z"}]});performance && performance.mark && performance.mark("Newsfeed.componentCouldBootstrap");</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX", "TeX"],
+            linebreaks: {
+                automatic: true
+            },
+            EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+        },
+        tex2jax: {
+            inlineMath: [["\\(", "\\)"], ["\\\\(", "\\\\)"]],
+            displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            processEscapes: true,
+            ignoreClass: "tex2jax_ignore|dno"
+        },
+        TeX: {
+            noUndefined: {
+                attributes: {
+                    mathcolor: "red",
+                    mathbackground: "#FFEEEE",
+                    mathsize: "90%"
+                }
+            }
+        },
+        Macros: {
+            href: "{}"
+        },
+        skipStartupTypeset: true,
+        messageStyle: "none"
+    });
+</script>
+<script type="text/javascript" async crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+    </div>
+
+</div>
+
+
+
+    <!-- Cheers, web-7d58f68c68-v7hqgp. -->
+
+    </main>
+</body>
+</html>
